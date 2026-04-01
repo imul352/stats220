@@ -1,0 +1,57 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+
+```
+
+## YouTube Video Watching Habits
+
+This report summarizes responses collected from a survey about YouTube video watching habits.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+logged_data <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vT6Sj-mk7hV4dVcJp4qxMJ4wSonNCLUMbO0Eng6lbrZIXQa_HT-SECvNb0g_WnVI5HnbATr69Yt_JCJ/pub?output=csv")
+
+latest_data <- logged_data %>%
+  rename(
+    timestamp = Timestamp,
+    video_length = Question.1..How.long.was.the.video.,
+    video_type = Question.2..What.type.of.video.was.it.,
+    device = Question.3..What.device.did.you.watch.on.,
+    watch_time = Question.4..What.time.of.day.did.you.watch.it.
+  )
+
+mean_length <- mean(latest_data$video_length, na.rm = TRUE)
+max_length <- max(latest_data$video_length, na.rm = TRUE)
+```
+
+The average video length recorded was `r round(mean_length, 1)` minutes,  
+with the longest video being `r max_length` minutes.
+
+```{r}
+ggplot(latest_data, aes(x = video_type)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Video Type Distribution",
+       x = "Video Type",
+       y = "Count") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(latest_data, aes(x = device)) +
+  geom_bar(fill = "tomato") +
+  labs(title = "Device Used to Watch Videos",
+       x = "Device",
+       y = "Count") +
+  theme_minimal()
+```
